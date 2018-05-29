@@ -14,11 +14,11 @@ class Tasky(object):
 
     palette = [
         ('proj', '', '', '', 'dark green', ''),
-        ('proj_focus', '', '', '', 'dark gray', 'dark green'),
+        ('proj_focus', '', '', '', 'black', 'dark green'),
         ('body','', '', '', 'dark blue', ''),
-        ('body_focus', '', '', '', 'dark gray', 'dark cyan'),
+        ('body_focus', '', '', '', 'black', 'dark cyan'),
         ('body_emph','', '', '', 'light red', ''),
-        ('body_emph_focus', '', '', '', 'dark gray', 'dark magenta'),
+        ('body_emph_focus', '', '', '', 'black', 'dark magenta'),
         ('head', '', '', '',  'light red', 'black'),
         ('dim', '', '', '', 'g54', 'black')
     ]
@@ -27,7 +27,8 @@ class Tasky(object):
 
         self.warrior = TaskWarrior()
 
-        self.limit = ''.join(sys.argv[1:])
+        self.default_limit = '-in -future -rnr'
+        self.limit = self.default_limit
 
         header = urwid.AttrMap(urwid.Text('tasky.α'), 'head')
         self.walker = urwid.SimpleListWalker([])
@@ -67,7 +68,14 @@ class Tasky(object):
             'i': self.new_task,
             ':': self.command_mode,
             '!': self.shell_mode,
-            '/': self.change_limit
+            '/': self.change_limit,
+            'I': self.inbox,
+            'R': self.rnr,
+            'F': self.future,
+            'W': self.work,
+            'P': self.personal,
+            'A': self.all,
+            'b': self.clear_limit
         }
 
         task_action_map = {
@@ -109,7 +117,37 @@ class Tasky(object):
         self.present_editor('! ', '', self.shell_done)
 
     def change_limit(self):
-        self.present_editor('Limit: ', '', self.limit_done)
+        self.present_editor('Filter: ', '', self.limit_done)
+
+    def inbox(self):
+        self.limit = '+in'
+        self.refresh()
+
+    def rnr(self):
+        self.limit = '+rnr'
+        self.refresh()
+
+    def future(self):
+        self.limit = '+future'
+        self.refresh()
+
+    def work(self):
+        self.set_limit('+work')
+
+    def personal(self):
+        self.set_limit('+personal')
+
+    def all(self):
+        self.limit = ''
+        self.refresh()
+
+    def set_limit(self, limit):
+        self.limit = self.default_limit + ' ' + limit
+        self.refresh()
+
+    def clear_limit(self):
+        self.limit = self.default_limit
+        self.refresh()
 
     def edit_task(self, task):
         self.edited_task = task
