@@ -174,8 +174,7 @@ class Tasky(object):
 
     @dismiss_editor
     def new_done(self, content):
-        limit = self.limit or ''
-        self.warrior.add(content + ' ' + limit)
+        self.warrior.add(content)
         self.refresh()
 
     @dismiss_editor
