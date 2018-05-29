@@ -67,13 +67,13 @@ class Tasky(object):
             'i': self.new_task,
             ':': self.command_mode,
             '!': self.shell_mode,
-            'l': self.change_limit
+            '/': self.change_limit
         }
 
         task_action_map = {
             'enter': (self.edit_task, False),
             'e': (self.edit_task, False),
-            'n': (self.task_note, False),
+            'n': (self.task_note, True),
             'c': (self.warrior.complete, True),
             'd': (self.warrior.delete, True),
             ' ': (self.warrior.toggle_active, True)
@@ -93,7 +93,8 @@ class Tasky(object):
 
 
     def task_note(self, task):
-        Utility.run_command("tmux split-window 'tasknote %i'" % task.id())
+        self.edited_task = task
+        self.present_editor(' >> ', '', self.annotate_done)
 
     def present_editor(self, prompt, text, handler):
         self.foot = LineEditor(prompt, text)
@@ -108,8 +109,7 @@ class Tasky(object):
         self.present_editor('! ', '', self.shell_done)
 
     def change_limit(self):
-        limit = self.limit or ''
-        self.present_editor('Limit: ', limit, self.limit_done)
+        self.present_editor('Limit: ', '', self.limit_done)
 
     def edit_task(self, task):
         self.edited_task = task
@@ -152,6 +152,12 @@ class Tasky(object):
     @dismiss_editor
     def limit_done(self, content):
         self.limit = content
+        self.refresh()
+
+    @dismiss_editor
+    def annotate_done(self, content):
+        self.warrior.annotate(self.edited_task, content)
+        self.edited_task = None
         self.refresh()
 
 

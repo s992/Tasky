@@ -42,6 +42,9 @@ class Task:
     def is_started(self):
         return self.start_date() is not None
 
+    def annotations(self):
+        return self.data.get('annotations', [])
+
     def due_date_string(self):
         return Task.show_date(self.due_date())
 
@@ -85,6 +88,9 @@ class TaskWarrior:
 
     def stop(self, task):
         Utility.run_command('task %s stop' % task.uuid())
+
+    def annotate(self, task, value):
+        Utility.run_command('task %s annotate %s' % (task.uuid(), value))
 
     def toggle_active(self, task):
         if task.is_started():

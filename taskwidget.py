@@ -6,7 +6,7 @@ class TaskWidget (urwid.WidgetWrap):
         self.task = task
 
         desc = urwid.Text(task.description())
-        proj = urwid.Text(task.project() + ' ', align='right')
+        proj = urwid.Text(task.project())
 
         due  = urwid.Text(task.due_date_string() + ' ', align='right')
         tags = urwid.Text(task.tags_string() + ' ', align='right')
@@ -16,7 +16,7 @@ class TaskWidget (urwid.WidgetWrap):
             (style, style_focus) = ('body_emph', 'body_emph_focus')
 
         item = urwid.AttrMap(urwid.Columns([
-            ('fixed', 11, urwid.AttrWrap(proj, 'proj', 'proj_focus')),
+            ('fixed', 30, urwid.AttrWrap(proj, 'proj', 'proj_focus')),
             desc,
             tags,
             ('fixed', 11, due)
