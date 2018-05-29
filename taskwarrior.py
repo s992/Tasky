@@ -45,6 +45,9 @@ class Task:
     def annotations(self):
         return self.data.get('annotations', [])
 
+    def urgency(self):
+        return self.data.get('urgency', 0)
+
     def due_date_string(self):
         return Task.show_date(self.due_date())
 
@@ -69,7 +72,9 @@ class TaskWarrior:
             'status:pending', args])
 
         task_json = '[%s]' % raw_output
-        return [Task(task) for task in json.loads(task_json, strict=False)[0]]
+        tasks = [Task(task) for task in json.loads(task_json, strict=False)[0]]
+
+        return sorted(tasks, key=lambda task: task.urgency(), reverse=True)
 
     def complete(self, task):
         Utility.run_command('task %s done' % task.uuid())
