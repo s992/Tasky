@@ -132,7 +132,7 @@ class Tasky(object):
         self.refresh()
 
     def work(self):
-        self.set_limit('+work')
+        self.set_limit('+work or +review')
 
     def personal(self):
         self.set_limit('+personal')
