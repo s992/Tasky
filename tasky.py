@@ -3,6 +3,7 @@
 
 import urwid
 import sys
+import subprocess
 
 from taskwarrior import TaskWarrior, Utility
 from taskwidget import TaskWidget
@@ -75,7 +76,7 @@ class Tasky(object):
             'W': self.work,
             'P': self.personal,
             'A': self.all,
-            'b': self.clear_limit
+            'b': self.clear_limit,
         }
 
         task_action_map = {
@@ -84,7 +85,9 @@ class Tasky(object):
             'n': (self.task_note, True),
             'c': (self.warrior.complete, True),
             'd': (self.warrior.delete, True),
-            ' ': (self.warrior.toggle_active, True)
+            ' ': (self.warrior.toggle_active, True),
+            'y': (self.copy_description, False),
+            'Y': (self.copy_notes, False)
         }
 
         if input in view_action_map:
@@ -148,6 +151,13 @@ class Tasky(object):
     def clear_limit(self):
         self.limit = self.default_limit
         self.refresh()
+
+    def copy_description(self, task):
+        Utility.write_to_clipboard(task.description())
+
+    def copy_notes(self, task):
+        notes = [note[u'description'] for note in task.annotations()]
+        Utility.write_to_clipboard("\n".join(notes))
 
     def edit_task(self, task):
         self.edited_task = task

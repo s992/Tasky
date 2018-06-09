@@ -10,6 +10,7 @@ class TaskWidget (urwid.WidgetWrap):
 
         due  = urwid.Text(task.due_date_string() + ' ', align='right')
         tags = urwid.Text(task.tags_string() + ' ', align='right')
+        notes = urwid.Text(str(len(task.annotations())), align='right')
 
         (style, style_focus) = ('body', 'body_focus')
         if (task.start_date() is not None):
@@ -19,6 +20,7 @@ class TaskWidget (urwid.WidgetWrap):
             ('fixed', 30, urwid.AttrWrap(proj, 'proj', 'proj_focus')),
             desc,
             tags,
+            ('fixed', 2, notes),
             ('fixed', 11, due)
         ]), style, style_focus)
 
