@@ -14,6 +14,11 @@ class Utility:
         process = subprocess.Popen('pbcopy', env={'LANG': 'en_US.UTF-8'}, stdin=subprocess.PIPE)
         process.communicate(output.encode('utf-8'))
 
+    @staticmethod
+    def is_url(url):
+        # lol
+        return url.startswith("http")
+
 class Task:
 
     def __init__(self, data):

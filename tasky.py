@@ -87,7 +87,8 @@ class Tasky(object):
             'd': (self.warrior.delete, True),
             ' ': (self.warrior.toggle_active, True),
             'y': (self.copy_description, False),
-            'Y': (self.copy_notes, False)
+            'Y': (self.copy_notes, False),
+            'o': (self.open_browser, False),
         }
 
         if input in view_action_map:
@@ -158,6 +159,20 @@ class Tasky(object):
     def copy_notes(self, task):
         notes = [note[u'description'] for note in task.annotations()]
         Utility.write_to_clipboard("\n".join(notes))
+
+    def open_browser(self, task):
+        url = ""
+
+        if Utility.is_url(task.description()):
+            url = task.description()
+        else:
+            possibles = [v[u'description'] for v in task.annotations() if Utility.is_url(v[u'description'])]
+            url = possibles[0] if possibles else ""
+
+        if (len(url)) == 0:
+            return
+
+        Utility.run_command('open -a "Google Chrome" %s' % url)
 
     def edit_task(self, task):
         self.edited_task = task
