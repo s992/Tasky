@@ -184,6 +184,9 @@ class Tasky(object):
         Utility.run_command('open -a "Google Chrome" %s' % url)
 
     def toggle_annotations(self, task):
+        if not len(task.annotations()):
+            return
+
         if task.uuid() in self.show_annotations:
             self.show_annotations.remove(task.uuid())
         else:
