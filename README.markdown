@@ -9,6 +9,13 @@ chmod +x tasknote
 chmod +x tasky
 ~~~~
 
+## Note
+
+This is a fork that likely will not be useful to you unless you have the
+exact same setup as me. :)
+
+I recommend heading over to the [original Tasky repo](https://github.com/jonsterling/Tasky).
+
 ## Tasky: a modal, interactive Taskwarrior client
 
 Tasky is pretty well undocumented, but it is basically a curses-based
