@@ -30,7 +30,7 @@ class Tasky(object):
 
         self.default_limit = '-in -future -rnr'
         self.limit = self.default_limit
-        self.show_annotations = False
+        self.show_annotations = []
 
         header = urwid.AttrMap(urwid.Text('tasky.α'), 'head')
         self.walker = urwid.SimpleListWalker([])
@@ -46,13 +46,14 @@ class Tasky(object):
         update_header()
 
         loop = urwid.MainLoop(self.view, Tasky.palette, unhandled_input=self.keystroke)
+        self.loop = loop
         urwid.connect_signal(self.walker, 'modified', update_header)
         loop.screen.set_terminal_properties(colors=256)
         loop.run()
 
     def refresh(self):
         limit = self.limit or ''
-        self.walker[:] = [TaskWidget(task, self.show_annotations) for task in self.warrior.pending_tasks(limit)]
+        self.walker[:] = [TaskWidget(task, task.id() in self.show_annotations) for task in self.warrior.pending_tasks(limit)]
 
     def keystroke(self, input):
         def exit():
@@ -82,7 +83,7 @@ class Tasky(object):
 
         task_action_map = {
             'enter': (self.edit_task, False),
-            'e': (self.edit_task, False),
+            'e': (self.edit_task_detail, True),
             'n': (self.task_note, True),
             'c': (self.warrior.complete, True),
             'd': (self.warrior.delete, True),
@@ -104,7 +105,6 @@ class Tasky(object):
 
     def selected_task(self):
         return self.list_box.get_focus()[0].task
-
 
     def task_note(self, task):
         self.edited_task = task
@@ -177,14 +177,22 @@ class Tasky(object):
         Utility.run_command('open -a "Google Chrome" %s' % url)
 
     def toggle_annotations(self, task):
-        self.show_annotations = not self.show_annotations
+        if task.id() in self.show_annotations:
+            self.show_annotations.remove(task.id())
+        else:
+            self.show_annotations.append(task.id())
 
     def edit_task(self, task):
         self.edited_task = task
         self.present_editor(' >> ', task.description(), self.edit_done)
 
+    def edit_task_detail(self, task):
+        self.loop.stop()
+        subprocess.check_call(['task %s edit' % str(task.id())], shell=True)
+        self.loop.start()
+
     def new_task(self):
-        self.present_editor(' >> ', '', self.new_done)
+        self.present_editor(' >> ', '+in ', self.new_done)
 
     def dismiss_editor(action):
         def wrapped(self, content):
