@@ -77,14 +77,15 @@ class Tasky(object):
             'F': self.future,
             'W': self.work,
             'P': self.personal,
-            'A': self.all,
+            '-': self.all,
             'b': self.clear_limit,
         }
 
         task_action_map = {
             'enter': (self.edit_task, False),
             'e': (self.edit_task_detail, True),
-            'n': (self.task_note, True),
+            'n': (self.task_annotate, True),
+            'N': (self.task_note, True),
             'c': (self.warrior.complete, True),
             'd': (self.warrior.delete, True),
             ' ': (self.warrior.toggle_active, True),
@@ -92,6 +93,7 @@ class Tasky(object):
             'Y': (self.copy_notes, False),
             'o': (self.open_browser, False),
             'a': (self.toggle_annotations, True),
+            'A': (self.toggle_all_annotations, True),
         }
 
         if input in view_action_map:
@@ -106,9 +108,14 @@ class Tasky(object):
     def selected_task(self):
         return self.list_box.get_focus()[0].task
 
-    def task_note(self, task):
+    def task_annotate(self, task):
         self.edited_task = task
         self.present_editor(' >> ', '', self.annotate_done)
+
+    def task_note(self, task):
+        self.loop.stop()
+        subprocess.check_call(['tasknote %s' % str(task.id())], shell=True)
+        self.loop.start()
 
     def present_editor(self, prompt, text, handler):
         self.foot = LineEditor(prompt, text)
@@ -181,6 +188,13 @@ class Tasky(object):
             self.show_annotations.remove(task.id())
         else:
             self.show_annotations.append(task.id())
+
+    def toggle_all_annotations(self, task):
+        if len(self.show_annotations):
+            self.show_annotations = []
+        else:
+            limit = self.limit or ''
+            self.show_annotations = [t.id() for t in self.warrior.pending_tasks(limit)]
 
     def edit_task(self, task):
         self.edited_task = task
