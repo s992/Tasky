@@ -30,6 +30,7 @@ class Tasky(object):
 
         self.default_limit = '-in -future -rnr'
         self.limit = self.default_limit
+        self.show_annotations = False
 
         header = urwid.AttrMap(urwid.Text('tasky.α'), 'head')
         self.walker = urwid.SimpleListWalker([])
@@ -51,7 +52,7 @@ class Tasky(object):
 
     def refresh(self):
         limit = self.limit or ''
-        self.walker[:] = map(TaskWidget, self.warrior.pending_tasks(limit))
+        self.walker[:] = [TaskWidget(task, self.show_annotations) for task in self.warrior.pending_tasks(limit)]
 
     def keystroke(self, input):
         def exit():
@@ -89,6 +90,7 @@ class Tasky(object):
             'y': (self.copy_description, False),
             'Y': (self.copy_notes, False),
             'o': (self.open_browser, False),
+            'a': (self.toggle_annotations, True),
         }
 
         if input in view_action_map:
@@ -174,13 +176,15 @@ class Tasky(object):
 
         Utility.run_command('open -a "Google Chrome" %s' % url)
 
+    def toggle_annotations(self, task):
+        self.show_annotations = not self.show_annotations
+
     def edit_task(self, task):
         self.edited_task = task
         self.present_editor(' >> ', task.description(), self.edit_done)
 
     def new_task(self):
         self.present_editor(' >> ', '', self.new_done)
-
 
     def dismiss_editor(action):
         def wrapped(self, content):

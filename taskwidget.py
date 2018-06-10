@@ -2,7 +2,7 @@ import urwid
 
 class TaskWidget (urwid.WidgetWrap):
 
-    def __init__ (self, task):
+    def __init__ (self, task, showing_annotations):
         self.task = task
 
         desc = urwid.Text(task.description())
@@ -24,7 +24,13 @@ class TaskWidget (urwid.WidgetWrap):
             ('fixed', 11, due)
         ]), style, style_focus)
 
-        urwid.WidgetWrap.__init__(self, item)
+
+        if showing_annotations:
+            annotations = [urwid.Columns([('fixed', 33, urwid.Text('')), urwid.Text('-> ' + n[u'description'])]) for n in task.annotations()]
+            row = urwid.Pile([item] + annotations)
+            urwid.WidgetWrap.__init__(self, row)
+        else:
+            urwid.WidgetWrap.__init__(self, item)
 
     def selectable (self):
         return True
