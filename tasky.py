@@ -53,7 +53,7 @@ class Tasky(object):
 
     def refresh(self):
         limit = self.limit or ''
-        self.walker[:] = [TaskWidget(task, task.id() in self.show_annotations) for task in self.warrior.pending_tasks(limit)]
+        self.walker[:] = [TaskWidget(task, task.uuid() in self.show_annotations) for task in self.warrior.pending_tasks(limit)]
 
     def keystroke(self, input):
         def exit():
@@ -184,17 +184,17 @@ class Tasky(object):
         Utility.run_command('open -a "Google Chrome" %s' % url)
 
     def toggle_annotations(self, task):
-        if task.id() in self.show_annotations:
-            self.show_annotations.remove(task.id())
+        if task.uuid() in self.show_annotations:
+            self.show_annotations.remove(task.uuid())
         else:
-            self.show_annotations.append(task.id())
+            self.show_annotations.append(task.uuid())
 
     def toggle_all_annotations(self, task):
         if len(self.show_annotations):
             self.show_annotations = []
         else:
             limit = self.limit or ''
-            self.show_annotations = [t.id() for t in self.warrior.pending_tasks(limit)]
+            self.show_annotations = [t.uuid() for t in self.warrior.pending_tasks(limit)]
 
     def edit_task(self, task):
         self.edited_task = task
