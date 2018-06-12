@@ -238,7 +238,9 @@ class Tasky(object):
 
     @dismiss_editor
     def shell_done(self, content):
-        Utility.run_command("tmux split-window '%s'" % content)
+        self.loop.stop()
+        subprocess.check_call(['/bin/zsh', '-i', '-c', content])
+        self.loop.start()
 
     @dismiss_editor
     def limit_done(self, content):
