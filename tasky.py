@@ -222,7 +222,7 @@ class Tasky(object):
         prefilled = ''
 
         if project:
-            prefilled += 'pro: {} '.format(project)
+            prefilled += 'pro:{} '.format(project)
 
         prefilled += '{} '.format(tags)
 
