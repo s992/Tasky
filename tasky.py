@@ -68,7 +68,8 @@ class Tasky(object):
             'Q': exit,
             'r': self.refresh,
             'u': undo,
-            'i': self.new_task,
+            'i': self.new_inbox,
+            't': self.new_task,
             ':': self.command_mode,
             '!': self.shell_mode,
             '/': self.change_limit,
@@ -94,6 +95,7 @@ class Tasky(object):
             'o': (self.open_browser, False),
             'a': (self.toggle_annotations, True),
             'A': (self.toggle_all_annotations, True),
+            'T': (self.new_task_with_defaults, True),
         }
 
         if input in view_action_map:
@@ -208,8 +210,23 @@ class Tasky(object):
         subprocess.check_call(['task %s edit' % str(task.id())], shell=True)
         self.loop.start()
 
-    def new_task(self):
-        self.present_editor(' >> ', '+in ', self.new_done)
+    def new_task(self, prefilled = ''):
+        self.present_editor(' >> ', prefilled, self.new_done)
+
+    def new_inbox(self):
+        self.new_task('+in ')
+
+    def new_task_with_defaults(self, task):
+        project = task.project()
+        tags = task.tags_string()
+        prefilled = ''
+
+        if project:
+            prefilled += 'pro: {} '.format(project)
+
+        prefilled += '{} '.format(tags)
+
+        self.new_task(prefilled)
 
     def dismiss_editor(action):
         def wrapped(self, content):
