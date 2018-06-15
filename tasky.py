@@ -96,6 +96,7 @@ class Tasky(object):
             'a': (self.toggle_annotations, True),
             'A': (self.toggle_all_annotations, True),
             'T': (self.new_task_with_defaults, True),
+            's': (self.sleep_task, True),
         }
 
         if input in view_action_map:
@@ -204,6 +205,10 @@ class Tasky(object):
     def edit_task(self, task):
         self.edited_task = task
         self.present_editor(' >> ', task.description(), self.edit_done)
+
+    def sleep_task(self, task):
+        self.edited_task = task
+        self.present_editor(' >> ', 'wait:', self.edit_done)
 
     def edit_task_detail(self, task):
         self.loop.stop()
