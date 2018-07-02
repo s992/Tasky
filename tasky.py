@@ -2,7 +2,6 @@
 # -*- coding: latin-1 -*-
 
 import urwid
-import sys
 import subprocess
 
 from taskwarrior import TaskWarrior, Utility
@@ -12,15 +11,14 @@ from scrollinglistbox import ScrollingListBox
 
 
 class Tasky(object):
-
     palette = [
         ('proj', '', '', '', 'dark green', ''),
         ('proj_focus', '', '', '', 'black', 'dark green'),
-        ('body','', '', '', 'dark blue', ''),
+        ('body', '', '', '', 'dark blue', ''),
         ('body_focus', '', '', '', 'black', 'dark cyan'),
-        ('body_emph','', '', '', 'light red', ''),
+        ('body_emph', '', '', '', 'light red', ''),
         ('body_emph_focus', '', '', '', 'black', 'dark magenta'),
-        ('head', '', '', '',  'light red', 'black'),
+        ('head', '', '', '', 'light red', 'black'),
         ('dim', '', '', '', 'g54', 'black')
     ]
 
@@ -32,7 +30,6 @@ class Tasky(object):
         self.limit = self.default_limit
         self.show_annotations = []
 
-        header = urwid.AttrMap(urwid.Text('tasky.α'), 'head')
         self.walker = urwid.SimpleListWalker([])
         self.list_box = ScrollingListBox(self.walker)
         self.view = urwid.Frame(urwid.AttrWrap(self.list_box, 'body'))
@@ -55,6 +52,10 @@ class Tasky(object):
         limit = self.limit or ''
         self.walker[:] = [TaskWidget(task, task.uuid() in self.show_annotations) for task in self.warrior.pending_tasks(limit)]
 
+    def sync(self):
+        self.warrior.sync()
+        self.refresh()
+
     def keystroke(self, input):
         def exit():
             raise urwid.ExitMainLoop()
@@ -66,7 +67,7 @@ class Tasky(object):
         view_action_map = {
             'q': exit,
             'Q': exit,
-            'r': self.refresh,
+            'r': self.sync,
             'u': undo,
             'i': self.new_inbox,
             't': self.new_task,
@@ -173,8 +174,6 @@ class Tasky(object):
         Utility.write_to_clipboard("\n".join(notes))
 
     def open_browser(self, task):
-        url = ""
-
         if Utility.is_url(task.description()):
             url = task.description()
         else:
@@ -215,7 +214,7 @@ class Tasky(object):
         subprocess.check_call(['task %s edit' % str(task.id())], shell=True)
         self.loop.start()
 
-    def new_task(self, prefilled = ''):
+    def new_task(self, prefilled=''):
         self.present_editor(' >> ', prefilled, self.new_done)
 
     def new_inbox(self):
@@ -240,6 +239,7 @@ class Tasky(object):
             if content is not None:
                 action(self, content)
             self.view.set_footer(None)
+
         return wrapped
 
     @dismiss_editor

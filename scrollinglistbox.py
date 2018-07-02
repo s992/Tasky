@@ -1,5 +1,6 @@
 import urwid
 
+
 class ScrollingListBox(urwid.ListBox):
 
     def scroll_down(self):
@@ -57,4 +58,3 @@ class ScrollingListBox(urwid.ListBox):
             key_map[key]()
 
         return urwid.ListBox.keypress(self, size, key)
-

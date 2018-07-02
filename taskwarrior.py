@@ -2,12 +2,13 @@ import subprocess
 import json
 import datetime
 
+
 class Utility:
 
     @staticmethod
     def run_command(args):
         subprocess.Popen(args, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE, shell=True).communicate()
+                         stderr=subprocess.PIPE, shell=True).communicate()
 
     @staticmethod
     def write_to_clipboard(output):
@@ -18,6 +19,7 @@ class Utility:
     def is_url(url):
         # lol
         return url.startswith("http")
+
 
 class Task:
 
@@ -31,10 +33,10 @@ class Task:
         return self.data.get('project', '')
 
     def tags(self):
-        return [ t.encode('utf-8') for t in self.data.get('tags', []) ]
+        return [t.encode('utf-8') for t in self.data.get('tags', [])]
 
     def tags_string(self):
-        tags = [ "+" + t for t in self.tags() ]
+        tags = ["+" + t for t in self.tags()]
         return ", ".join(tags)
 
     def uuid(self):
@@ -64,7 +66,7 @@ class Task:
     def parse_date_at_key(self, key):
         if key in self.data:
             return datetime.datetime.strptime(self.data[key][:8],
-                    "%Y%m%d").date()
+                                              "%Y%m%d").date()
         return None
 
     @staticmethod
@@ -75,11 +77,12 @@ class Task:
             return date.strftime("%m/%d")
         return ''
 
+
 class TaskWarrior:
 
     def pending_tasks(self, args=''):
         raw_output = subprocess.check_output(['task', 'export',
-            'status:pending', args])
+                                              'status:pending', args])
 
         task_json = '[%s]' % raw_output
         tasks = [Task(task) for task in json.loads(task_json, strict=False)[0]]
@@ -116,4 +119,5 @@ class TaskWarrior:
     def undo(self):
         Utility.run_command('task rc.confirmation:no undo')
 
-
+    def sync(self):
+        Utility.run_command('task sync')

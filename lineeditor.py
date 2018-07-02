@@ -1,7 +1,7 @@
 import urwid
 
-class LineEditor(urwid.Edit):
 
+class LineEditor(urwid.Edit):
     __metaclass__ = urwid.signals.MetaSignals
     signals = ['done']
 
