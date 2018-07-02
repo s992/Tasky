@@ -8,6 +8,7 @@ from taskwarrior import TaskWarrior, Utility
 from taskwidget import TaskWidget
 from lineeditor import LineEditor
 from scrollinglistbox import ScrollingListBox
+from config import Config
 
 
 class Tasky(object):
@@ -25,8 +26,9 @@ class Tasky(object):
     def __init__(self):
 
         self.warrior = TaskWarrior()
+        self.config = Config()
 
-        self.default_limit = '-in -future -rnr'
+        self.default_limit = self.config.get_default_filter()
         self.limit = self.default_limit
         self.show_annotations = []
 
@@ -74,11 +76,6 @@ class Tasky(object):
             ':': self.command_mode,
             '!': self.shell_mode,
             '/': self.change_limit,
-            'I': self.inbox,
-            'R': self.rnr,
-            'F': self.future,
-            'W': self.work,
-            'P': self.personal,
             '-': self.all,
             'b': self.clear_limit,
         }
@@ -100,8 +97,16 @@ class Tasky(object):
             's': (self.sleep_task, True),
         }
 
+        config_bind = self.config.get_bind(input)
+
+        if config_bind and len(config_bind):
+            self.limit = config_bind
+            self.refresh()
+            return
+
         if input in view_action_map:
             view_action_map[input]()
+            return
 
         if input in task_action_map:
             (action, should_refresh) = task_action_map[input]
@@ -136,30 +141,8 @@ class Tasky(object):
     def change_limit(self):
         self.present_editor('Filter: ', '', self.limit_done)
 
-    def inbox(self):
-        self.limit = '+in'
-        self.refresh()
-
-    def rnr(self):
-        self.limit = '+rnr'
-        self.refresh()
-
-    def future(self):
-        self.limit = '+future'
-        self.refresh()
-
-    def work(self):
-        self.set_limit('(+work or +review)')
-
-    def personal(self):
-        self.set_limit('+personal')
-
     def all(self):
         self.limit = ''
-        self.refresh()
-
-    def set_limit(self, limit):
-        self.limit = self.default_limit + ' ' + limit
         self.refresh()
 
     def clear_limit(self):
