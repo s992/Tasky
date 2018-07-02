@@ -174,16 +174,16 @@ class Tasky(object):
         Utility.write_to_clipboard("\n".join(notes))
 
     def open_browser(self, task):
+        urls = []
+
         if Utility.is_url(task.description()):
-            url = task.description()
-        else:
-            possibles = [v[u'description'] for v in task.annotations() if Utility.is_url(v[u'description'])]
-            url = possibles[0] if possibles else ""
+            urls.append(task.description())
 
-        if (len(url)) == 0:
-            return
+        possibles = [v[u'description'] for v in task.annotations() if Utility.is_url(v[u'description'])]
+        urls.extend(possibles)
 
-        Utility.run_command('open -a "Google Chrome" %s' % url)
+        for url in urls:
+            Utility.run_command('open -a "Google Chrome" %s' % url)
 
     def toggle_annotations(self, task):
         if not len(task.annotations()):
