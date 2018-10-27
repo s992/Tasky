@@ -77,8 +77,3 @@ today, new tasks will also have those attributes.
 
 Tasky does not yet support sorting or arbitrary searching.
 
-
-## Tasknote
-
-Tasknote is another small utility that allows you to associate a text
-file with a task. It is included in this repository.
