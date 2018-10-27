@@ -4,5 +4,5 @@ if [ -z "$INSTALL_DIR" ]; then
   INSTALL_DIR="$HOME/dotfiles/bin"
 fi
 
-bazel build tasky --build_python_zip
-cp bazel-bin/tasky "$INSTALL_DIR"
+bazel build //src:tasky --build_python_zip
+cp bazel-bin/src/tasky "$INSTALL_DIR"

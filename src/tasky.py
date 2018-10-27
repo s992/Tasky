@@ -4,11 +4,11 @@
 import urwid
 import subprocess
 
-from taskwarrior import TaskWarrior, Utility
-from taskwidget import TaskWidget
-from lineeditor import LineEditor
-from scrollinglistbox import ScrollingListBox
-from config import Config
+from lib.taskwarrior import TaskWarrior, Utility
+from lib.taskwidget import TaskWidget
+from lib.lineeditor import LineEditor
+from lib.scrollinglistbox import ScrollingListBox
+from lib.config import Config
 
 
 class Tasky(object):
