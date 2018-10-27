@@ -1,0 +1,19 @@
+load("@io_bazel_rules_python//python:python.bzl", "py_binary", "py_library")
+
+py_library(name = "config", srcs = [":config.py"])
+py_library(name = "lineeditor", srcs = [":lineeditor.py"])
+py_library(name = "scrollinglistbox", srcs = [":scrollinglistbox.py"])
+py_library(name = "taskwarrior", srcs = [":taskwarrior.py"])
+py_library(name = "taskwidget", srcs = [":taskwidget.py"])
+
+py_binary(
+  name = "tasky",
+  srcs = [":tasky.py"],
+  deps = [
+    ":config",
+    ":lineeditor",
+    ":scrollinglistbox",
+    ":taskwarrior",
+    ":taskwidget",
+  ],
+)
